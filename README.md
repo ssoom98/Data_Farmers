@@ -116,22 +116,30 @@
 **시계열 피처 설계(누설 방지)**
 
 * 로그 변환: `log_price = log1p(unit_price_week)`, `log_qty = log1p(qty_in_week)`
-* **랙**: L ∈ {1,2,4,8,12,52} → `log_price_lag{L}`, `log_qty_lag{L}`
-* **롤링**: **`shift(1)` 적용 후** W ∈ {4,8,12,26,52} → `*_rollmeanW`, `*_rollstdW`
-* **연간 차이**: `log_price_yoy_gap = log_price - log_price_lag52`
-* **변동성**: `price_vol_W = std(pct_change(unit_price_week))` with `shift(1).rolling(W)`, W ∈ {4,8,12}
-* **캘린더**: `year`, `month`, `weekofyear(ISO)`
-* **타깃**: `next_week_unit_price`, `next_week_log_price` = `shift(-1)`
+* **랙**: 각 품목 그룹별 L ∈ {1,2,4,8,12,52} → `log_price_lag{L}`, `log_qty_lag{L}`
+* **롤링**: 과거 정보만 쓰도록 **`shift(1)` 적용 후** 창크기 W ∈ {4,8,12,26,52}
+  → `*_rollmeanW`, `*_rollstdW`
+* **연간 차이(계절성 비교)**: `log_price_yoy_gap = log_price - log_price_lag52`
+* **변동성(가격 급등락 민감도):**: `price_vol_W = std(pct_change(unit_price_week))` with `shift(1).rolling(W)`, W ∈ {4,8,12}
+* **캘린더 피처**: `year`, `month`, `weekofyear(ISO)`
+* **예측 타깃**: `next_week_unit_price`, `next_week_log_price` = `shift(-1)`
+  : t+1 한 주 앞을 타깃으로 설정(실무 의사결정 주기와 일치)
+
+
+**스키마(핵심 열 예시)**
+* 키: item, week
+* 원본: unit_price_week, qty_in_week
+* 로그: log_price, log_qty
+* 랙/롤링: log_price_lag{1,2,4,8,12,52}, log_price_rollmean{4,8,12,26,52}, log_price_rollstd{4,8,12,26,52} (수량도 동일 패턴)
+* 변동성: price_vol_{4,8,12}
+* 캘린더: year, month, weekofyear
+* 타깃: next_week_unit_price, next_week_log_price
 
 **데이터 품질 & 안전장치**
 
 * 모든 롤링은 **반드시 `shift(1)`** 후 계산(누설 방지)
 * 랙/롤링 초기결측 증가에 대한 드롭/대치 정책 문서화
 * 그룹 내 `week` 기준 정렬 보장, 기상 결합 누락 시 보수적 처리
-
-**보고서용 추천 시각화**
-
-* 피처 중요도(SHAP/Permutation), 상관 히트맵(품목별), 변동성 타임라인(`price_vol_12` 상위 구간 표시), **기상–단가 시차 관계**(예: `tmax_lag{1..8}` vs `log_price`)
 
 ---
 
