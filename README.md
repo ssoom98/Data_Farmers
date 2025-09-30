@@ -187,7 +187,7 @@
 **피처 중요도(상위, gain 기준)**
 (파일: `reports/metrics/global_lgbm_feature_importance.csv`)
 
-* 상위 예: `log_price`, `log_price_rollmean4`, `item`, `log_price_lag1`, `weekofyear`, `log_price_lag52`, `log_price_lag2`, `log_price_yoy_gap`, `log_price_rollmean52`, `qty_in_week`, `log_qty_yoy_gap`, `price_vol_4`
+* 상위: `log_price`, `log_price_rollmean4`, `item`, `log_price_lag1`, `weekofyear`, `log_price_lag52`, `log_price_lag2`, `log_price_yoy_gap`, `log_price_rollmean52`, `qty_in_week`, `log_qty_yoy_gap`, `price_vol_4`
 
 
 ---
