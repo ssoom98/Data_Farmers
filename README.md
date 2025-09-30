@@ -189,7 +189,6 @@
 
 * 상위 예: `log_price`, `log_price_rollmean4`, `item`, `log_price_lag1`, `weekofyear`, `log_price_lag52`, `log_price_lag2`, `log_price_yoy_gap`, `log_price_rollmean52`, `qty_in_week`, `log_qty_yoy_gap`, `price_vol_4`
 
-![feature\_importance\_gain](reports/figures/interpret/feature_importance_gain.png)
 
 ---
 
@@ -244,58 +243,10 @@
 
 * 추천 커버리지(%) · 평균 절감율(%) · 안정성 비율(%) · 수용율(%)
 
----
-
-## 6. 배포/운영 파이프라인
-
-**목표**
-최신 주까지 갱신된 피처를 입력으로 **다음 주 단가 예측 CSV**를 산출하고, 대시보드에 반영합니다.
-
-**주요 스크립트**
-
-* 다음 주 예측: `src/models/predict_next_week.py`
-  → `predictions/next_week/global_lgbm_next_week.csv`
-* 대체재 추천: `src/recommenders/suggest.py`
-  → `suggestions/suggestions_next_week.csv`
-
-**스케줄**
-매주 **월요일 00:30** 배치 실행(갱신 → 예측 → 추천 → 대시보드)
-
-**운영상 유의사항**
-
-* 예측 대상 선정 로직: `next_week_unit_price` 결측 행(일부 품목 누락 가능)
-  → **“품목별 최신 주 1행 강제 선택”** 보완 권장
-* 파일 잠금·경로 이슈 대응: 안전 저장 유틸 적용 권장
 
 ---
 
-## 7. 재현(리프로듀서블) 커맨드
-
-```bash
-# 1) 원시 통합 → 주간 집계 → 피처 생성
-python -m src.data.build_master_raw
-python -m src.data.build_weekly
-python -m src.features.make_weekly_features
-
-# 2) 베이스라인
-python -m src.models.train_baselines
-
-# 3) Global GBM (수정본)
-python -m src.models.train_global_gbm
-
-# 4) (선택) 튜닝 / 퀀타일 / 잔차 리포트
-python -m src.models.tune_global_gbm_optuna --trials 60 --cv True
-python -m src.models.train_global_gbm_quantile
-python -m src.reports.plot_residuals_by_item
-
-# 5) (운영) 다음 주 예측 & 대체재 추천
-python -m src.models.predict_next_week
-python -m src.recommenders.suggest
-```
-
----
-
-## 8. 프로젝트 결과 요약
+## 프로젝트 결과 요약
 
 1. **데이터 인사이트**
 
@@ -317,31 +268,6 @@ python -m src.recommenders.suggest
 
 * 주간 배치 → 예측·추천 자동 산출
 * 향후: Optuna 최적화 반영, **퀀타일 회귀(리스크 밴드)** 배포, 로컬 보정, **영양/조리 제약** 통합, 조달 API 연동
-
----
-
-## 9. 저장소 산출물(발췌)
-
-* 예측/지표
-
-  * `predictions/val/snaive_val.csv`
-  * `predictions/val/global_lgbm_val.csv`
-  * `predictions/next_week/global_lgbm_next_week.csv`
-  * `reports/metrics/baseline_val_metrics.csv` / `..._by_item.csv`
-  * `reports/metrics/global_lgbm_val_metrics.csv` / `..._by_item.csv` / `global_lgbm_cv_metrics.csv` / `global_lgbm_feature_importance.csv`
-* 시각화
-
-  * `reports/figures/weekly_eda/coverage_heatmap_top40.png`
-  * `reports/figures/weekly_eda/price_boxplot_top30.png`
-  * `reports/figures/weekly_eda/qty_vs_price_scatter_all.png`
-  * `reports/figures/interpret/feature_importance_gain.png`
-
----
-
-## 10. 라이선스 / 문의
-
-* (필요 시) 라이선스 고지
-* 문의: 팀 이메일 또는 이슈 트래커
 
 ---
 
