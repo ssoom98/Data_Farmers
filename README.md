@@ -86,6 +86,19 @@
 </div>
 
 
+* **주간 총액/반입량 추이**(품목별 시간경과에 따른 추세·계절성 시각화)
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+
+  <img src="https://github.com/user-attachments/assets/afa38bee-6aad-4cbb-849f-992d02162044" alt="trends_amount_week_item_시금치(일반)" width="300"/>
+
+  <img src="https://github.com/user-attachments/assets/5f11ea92-03ae-448c-9df1-992b0b8a4492" alt="trends_price_week_item_시금치(일반)" width="300"/>
+
+  <img src="https://github.com/user-attachments/assets/6a7d4ca5-1510-4b92-8e7a-ba9c5a2e38b0" alt="trends_qty_week_item_시금치(일반)" width="300"/>
+
+</div>
+
+
 ---
 
 ## 2. 피처 엔지니어링 (`src/features/make_weekly_features.py`)
