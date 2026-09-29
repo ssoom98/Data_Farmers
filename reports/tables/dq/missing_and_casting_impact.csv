@@ -1,0 +1,2 @@
+﻿file,n_rows_before,drop_date_null,drop_item_null,qty_in_nan_after_cast,amount_nan_after_cast,n_rows_after_date_item_drop
+D:\TMD_final_agri1\data\raw\price_final.csv,199154,0,0,34384,34363,199154
